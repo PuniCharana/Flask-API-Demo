@@ -1,4 +1,5 @@
-from apis import *
+from apis import db
+from marshmallow import Schema, fields
 
 class Cat(db.Model):
     __tablename__ = 'cat'
@@ -8,3 +9,8 @@ class Cat(db.Model):
     def __init__(self, id, name):
         self.id = id
         self.name = name
+
+class CatSchema(Schema):
+    class Meta:
+        model = Cat
+        fields = ('id', 'name')

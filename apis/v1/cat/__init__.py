@@ -1,6 +1,6 @@
 from flask_restplus import Namespace, Resource, fields
 from .business import get_all_cats, get_cat_by_id, add_new_cat
-
+from .models import CatSchema
 api = Namespace('cats', description='Cats related operations')
 
 cat = api.model('Cat', {
@@ -14,7 +14,9 @@ class CatList(Resource):
     @api.marshal_list_with(cat)
     def get(self):
         '''List all cats'''
-        return get_all_cats()
+        cat_schema = CatSchema(many=True)
+        result = get_all_cats()
+        return result
 
     def post(self):
         '''Add new cat'''
@@ -29,4 +31,6 @@ class Cat(Resource):
     @api.marshal_with(cat)
     def get(self, id):
         '''Fetch a cat given its identifier'''
-        return get_cat_by_id(id)
+        cat_schema = CatSchema(dump_only=('id'))
+        result = get_cat_by_id(id)
+        return result, 200
