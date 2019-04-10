@@ -1,7 +1,7 @@
 from flask_restplus import Api
 from flask import Blueprint
-from .ns_cat import api as ns1
-from .ns_dog import api as ns2
+from .cat import api as ns1
+from .dog import api as ns2
 
 blueprint = Blueprint('Version 1', __name__, url_prefix='/v1')
 
