@@ -1,17 +1,21 @@
+from flask import request
 from flask_restplus import Namespace, Resource, fields
+
 from .business import get_all_cats, get_cat_by_id, add_new_cat
 from .models import CatSchema
-api = Namespace('cats', description='Cats related operations')
 
-cat = api.model('Cat', {
+ns = Namespace('cats', description='Cats related operations')
+
+cat = ns.model('Cat', {
     'id': fields.String(required=True, description='The cat identifier'),
     'name': fields.String(required=True, description='The cat name'),
 })
 
-@api.route('/')
+
+@ns.route('/')
 class CatList(Resource):
-    @api.doc('list_cats')
-    @api.marshal_list_with(cat)
+    @ns.doc('list_cats')
+    @ns.marshal_list_with(cat)
     def get(self):
         '''List all cats'''
         cat_schema = CatSchema(many=True)
@@ -20,17 +24,31 @@ class CatList(Resource):
 
     def post(self):
         '''Add new cat'''
+        cat_schema = CatSchema(many=True)
+        json_input = request.get_json()
+        data, errors = cat_schema.load(json_input)
+        if errors:
+            print(errors)
+            return errors
+            # return jsonify({'errors': errors}), 422
+
+        print(data)
+
         return add_new_cat()
 
 
-@api.route('/<id>')
-@api.param('id', 'The cat identifier')
-@api.response(404, 'Cat not found')
+@ns.route('/<id>')
+@ns.param('id', 'The cat identifier')
+# @ns.response(404, 'Cat not found')
 class Cat(Resource):
-    @api.doc('get_cat')
-    @api.marshal_with(cat)
+    @ns.doc('get_cat')
+    @ns.marshal_with(cat)
     def get(self, id):
         '''Fetch a cat given its identifier'''
         cat_schema = CatSchema(dump_only=('id'))
         result = get_cat_by_id(id)
-        return result, 200
+
+        if result:
+            return result, 200
+
+        ns.abort(404, error="stfu")
