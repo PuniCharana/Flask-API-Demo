@@ -1,7 +1,7 @@
-#Flask Demo App
+# Flask Demo App
 
 
-###How to run the app
+### How to run the app
 ```
 git clone https://github.com/PuniCharana/Flask-API-Demo.git
 
